@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>WINE LIST</title>
+    </h:head>
+    <h:body>
+
+
+
+        <h:form  id="form">
+           
+  <center><h2>WINE LIST</h2></center>
+
+            <p:tooltip />
+            <p:messages autoUpdate="true" id="messages" showDetail="true" closable="true"/>
+
+            <p:dataTable id="wineDT" value="#{testBackingBean.wineList}" var="wine" style="margin: 2em;" rowKey="#{wine.lotCode}"
+                         emptyMessage="No Wines found with given criteria"  widgetVar="wineTable1" >
+                
+                <p:column  filterBy="#{wine.lotCode}"   filterMatchMode="contains" headerText="Lot Code">
+                    <p:outputLabel value="#{wine.lotCode}"/>
+                </p:column>
+                <p:column filterBy="#{wine.volume}"   filterMatchMode="contains" headerText="Volume">
+                    <p:outputLabel value="#{wine.volume}"/>
+                </p:column>
+                <p:column filterBy="#{wine.description}"   filterMatchMode="contains" headerText="Description">
+                    <p:outputLabel value="#{wine.description}"/>
+                </p:column>
+                <p:column filterBy="#{wine.tankCode}"   filterMatchMode="contains" headerText="Tank Code">
+                    <p:outputLabel value="#{wine.tankCode}"/>
+                </p:column>
+                <p:column filterBy="#{wine.productState}"   filterMatchMode="contains" headerText="Product State">
+                    <p:outputLabel value="#{wine.productState}"/>
+                </p:column>
+                <p:column filterBy="#{wine.ownerName}"   filterMatchMode="contains" headerText="Owner Name">
+                    <p:outputLabel value="#{wine.ownerName}"/>
+                </p:column>
+
+                <p:column style="width:170px;text-align: center">
+                    <p:commandButton value="View" update=":form:wineView" oncomplete="PF('viewDialog').show()">
+                        <f:setPropertyActionListener value="#{wine}" target="#{testBackingBean.selectedWine}"/>
+                    </p:commandButton>
+
+                    <p:growl id="message" showDetail="true" />
+
+                     <p:commandButton value="Edit" update=":form:wineEdit" oncomplete="PF('editDialog').show()">
+                        <f:setPropertyActionListener value="#{wine}" target="#{testBackingBean.selectedWine}"/>
+                    </p:commandButton>
+
+                </p:column>
+            </p:dataTable>
+            <p:dialog header="Edit Wine" widgetVar="editDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                <p:outputPanel id="wineEdit" style="text-align:center;">
+                    <p:panelGrid  columns="2" rendered="#{not empty testBackingBean.selectedWine}" columnClasses="label,value">
+                        <p:outputLabel value="Lot Code: " />
+                        <p:inputText value="#{testBackingBean.selectedWine.lotCode}" disabled="true" />
+                        <p:outputLabel value="Volume: " />
+                        <p:inputText value="#{testBackingBean.selectedWine.volume}" disabled="true" />
+                        <p:outputLabel value="Description: " />
+                        <p:inputText value="#{testBackingBean.selectedWine.description}" />
+                        <p:outputLabel value="Tank Code: " />
+                        <p:inputText value="#{testBackingBean.selectedWine.tankCode}" disabled="true" />
+                        <p:outputLabel value="Product State: " />
+                        <p:inputText value="#{testBackingBean.selectedWine.productState}" />
+                        <p:outputLabel value="Owner Name: " />
+                        <p:inputText value="#{testBackingBean.selectedWine.ownerName}" disabled="true"/>
+                    </p:panelGrid><p:commandButton ajax="false" value="Update" update=":form:wineDT" action="#{testBackingBean.updateWineDetails()}" onclick="editDialog.hide();"/>
+                </p:outputPanel>
+            </p:dialog>
+            
+            
+            <p:dialog header="View Wine" widgetVar="viewDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                <p:outputPanel id="wineView" style="text-align:center;">
+                    <p:panelGrid  columns="2" rendered="#{not empty testBackingBean.selectedWine}" columnClasses="label,value">
+                        <p:outputLabel value="Filter By: " />
+                        <p:selectOneMenu value="#{testBackingBean.filterMode}" >
+                            
+                            <f:selectItem itemLabel="Year" itemValue="Year" />
+                            <f:selectItem itemLabel="Variety" itemValue="Variety" />
+                            <f:selectItem itemLabel="Region" itemValue="Region" />
+                            <f:selectItem itemLabel="Year and Variety" itemValue="Year and Variety" />
+                        </p:selectOneMenu> &nbsp; &nbsp; &nbsp;
+                    </p:panelGrid>
+                    <p:commandButton  value="View" ajax="false" action="#{testBackingBean.filter()}" />
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>
+
+        
+    </h:body>
+</html>
